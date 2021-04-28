@@ -42,6 +42,9 @@ public abstract class LoaderThread implements Runnable {
     public final void run() {
         beforeLoad();
         try (Connection conn = benchmarkModule.getConnection()) {
+            // hikida add start //
+            conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            // hikida add end //
             load(conn);
         } catch (SQLException ex) {
             SQLException next_ex = ex.getNextException();
