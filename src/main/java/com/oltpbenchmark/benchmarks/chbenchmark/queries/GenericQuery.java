@@ -24,16 +24,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public abstract class GenericQuery extends Procedure {
 
     protected abstract SQLStmt get_query();
 
     public void run(Connection conn) throws SQLException {
-        try (PreparedStatement stmt = this.getPreparedStatement(conn, get_query()); ResultSet rs = stmt.executeQuery()) {
+        PreparedStatement pstmt = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = this.getPreparedStatement(conn, get_query());
+
+            stmt = conn.createStatement();
+            stmt.executeQuery("SET TRANSACTION READ ONLY");
+            
+            rs = pstmt.executeQuery();
             while (rs.next()) {
                 //do nothing
             }
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (pstmt != null) pstmt.close();
         }
     }
 }
