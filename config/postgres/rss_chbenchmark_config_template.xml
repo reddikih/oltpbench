@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<parameters>
+
+    <!-- Connection details -->
+    <type>POSTGRES</type>
+    <driver>org.postgresql.Driver</driver>
+    <url>jdbc:postgresql://{HOST}:{PORT}/{DBNAME}?sslmode=disable&amp;ApplicationName={DBNAME}&amp;reWriteBatchedInserts=true</url>
+    <url bench="chbenchmark">jdbc:postgresql://{HOST}:{OLAP_PORT}/{DBNAME}?sslmode=disable&amp;ApplicationName={DBNAME}&amp;reWriteBatchedInserts=true</url>
+    <username>{USER}</username>
+    <password>{PASSWORD}</password>
+    <isolation bench="tpcc">{OLTP_ISOLATION_LEVEL}</isolation>
+    <isolation bench="chbenchmark">{OLAP_ISOLATION_LEVEL}</isolation>
+    <batchsize>128</batchsize>
+    <poolsize>100</poolsize>
+
+    <!-- Scale factor is the number of warehouses in TPCC -->
+    <scalefactor>{SCALE_FACTOR}</scalefactor>
+
+    <!-- The workload -->
+    <terminals bench="tpcc">{OLTP_CLIENTS}</terminals>
+    <terminals bench="chbenchmark">{OLAP_CLIENTS}</terminals>
+
+    <works>
+        <!-- A Basic WorkPhase for Mixed Workloads -->
+        <work>
+            <time>{WORKLOAD_DURATION}</time>
+
+            <!-- Note: The rate can be set to UNLIMITED or DISABLED -->
+            <rate>unlimited</rate>
+
+            <!-- Need to Specify transaction weights for each workload .. Otherwise the number of fields won't match -->
+            <weights bench="tpcc">45,43,4,4,4</weights>
+            <weights bench="chbenchmark">3, 2, 3, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5</weights>
+        </work>
+    </works>
+
+    <!-- CH specific -->
+    <transactiontypes bench="chbenchmark">
+        <transactiontype>
+            <name>Q1</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q2</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q3</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q4</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q5</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q6</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q7</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q8</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q9</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q10</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q11</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q12</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q13</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q14</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q15</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q16</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q17</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q18</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q19</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q20</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q21</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Q22</name>
+        </transactiontype>
+    </transactiontypes>
+
+    <!-- TPCC specific -->
+    <transactiontypes bench="tpcc">
+        <transactiontype>
+            <name>NewOrder</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Payment</name>
+        </transactiontype>
+        <transactiontype>
+            <name>OrderStatus</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Delivery</name>
+        </transactiontype>
+        <transactiontype>
+            <name>StockLevel</name>
+        </transactiontype>
+    </transactiontypes>
+</parameters>
