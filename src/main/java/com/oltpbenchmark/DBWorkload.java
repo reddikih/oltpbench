@@ -118,7 +118,10 @@ public class DBWorkload {
             // Pull in database configuration
             wrkld.setDatabaseType(DatabaseType.get(xmlConfig.getString("type")));
             wrkld.setDriverClass(xmlConfig.getString("driver"));
-            wrkld.setUrl(xmlConfig.getString("url"));
+            // hikida mod start //
+            String url = xmlConfig.getString("url[not(@bench)]", "You_should_specify_url");
+            wrkld.setUrl(xmlConfig.getString("url" + pluginTest, url));
+            // hikida mod end //
             wrkld.setUsername(xmlConfig.getString("username"));
             wrkld.setPassword(xmlConfig.getString("password"));
             wrkld.setBatchSize(xmlConfig.getInt("batchsize", 128));
