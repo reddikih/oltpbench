@@ -20,6 +20,9 @@ package com.oltpbenchmark.benchmarks.chbenchmark.queries;
 import com.oltpbenchmark.api.Procedure;
 import com.oltpbenchmark.api.SQLStmt;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,6 +30,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public abstract class GenericQuery extends Procedure {
+    private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
 
     protected abstract SQLStmt get_query();
 
@@ -38,7 +42,13 @@ public abstract class GenericQuery extends Procedure {
             pstmt = this.getPreparedStatement(conn, get_query());
 
             stmt = conn.createStatement();
-            stmt.executeQuery("SET TRANSACTION READ ONLY");
+
+            // hikida add start //
+            if (stmt.execute("SET TRANSACTION READ ONLY"))
+                LOG.debug("read only flag set succeeded.");
+            else
+                LOG.debug("read only flag set failed.");
+            // hikida add end //
             
             rs = pstmt.executeQuery();
             while (rs.next()) {
