@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -39,22 +40,40 @@ public abstract class GenericQuery extends Procedure {
         Statement stmt = null;
         ResultSet rs = null;
         try {
+            conn.setReadOnly(true);
             pstmt = this.getPreparedStatement(conn, get_query());
 
             stmt = conn.createStatement();
 
             // hikida add start //
-            if (stmt.execute("SET TRANSACTION READ ONLY"))
-                LOG.debug("read only flag set succeeded.");
+            if (conn.isReadOnly())
+                LOG.debug("[hiki] {} read only flag set succeeded.", getProcedureName());
             else
-                LOG.debug("read only flag set failed.");
+                LOG.debug("[hiki] {} read only flag set failed.", getProcedureName());
             // hikida add end //
-            
+
             rs = pstmt.executeQuery();
-            while (rs.next()) {
-                //do nothing
+            // hikida add start
+            if (LOG.isDebugEnabled()) {
+                StringBuilder builder = new StringBuilder();
+                LOG.debug("[hiki] {} Statement: {}", getProcedureName(), pstmt);
+                builder.append(String.format("[hiki] %s Result: ", getProcedureName()));
+                // hikida add end
+                while (rs.next()) {
+                    //do nothing
+                    // hikida add start
+                    ResultSetMetaData rsmd = rs.getMetaData();
+                    int cols = rsmd.getColumnCount();
+                    for (int i=1; i<=cols; i++) {
+                        builder.append(String.format("%s=%s ", rsmd.getColumnLabel(i), rs.getString(i)));
+                    }
+                    builder.append(", ");
+                    // hikida add end
+                }
+                LOG.debug(builder.toString());
             }
-        } finally {
+            // hikida add end
+    } finally {
             if (rs != null) rs.close();
             if (stmt != null) stmt.close();
             if (pstmt != null) pstmt.close();
