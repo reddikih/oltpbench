@@ -47,28 +47,24 @@ public abstract class GenericQuery extends Procedure {
 
             // hikida add start //
             if (conn.isReadOnly())
-                LOG.debug("[hiki] {} read only flag set succeeded.", getProcedureName());
+                LOG.debug("[rss] {} read only flag set succeeded.", getProcedureName());
             else
-                LOG.debug("[hiki] {} read only flag set failed.", getProcedureName());
+                LOG.debug("[rss] {} read only flag set failed.", getProcedureName());
             // hikida add end //
 
             rs = pstmt.executeQuery();
             // hikida add start
             if (LOG.isDebugEnabled()) {
                 StringBuilder builder = new StringBuilder();
-                LOG.debug("[hiki] {} Statement: {}", getProcedureName(), pstmt);
-                builder.append(String.format("[hiki] %s Result: ", getProcedureName()));
-                // hikida add end
+                LOG.debug("[rss] {} Statement: {}", getProcedureName(), pstmt);
+                builder.append(String.format("[rss] %s Result: ", getProcedureName()));
                 while (rs.next()) {
-                    //do nothing
-                    // hikida add start
                     ResultSetMetaData rsmd = rs.getMetaData();
                     int cols = rsmd.getColumnCount();
                     for (int i=1; i<=cols; i++) {
                         builder.append(String.format("%s=%s ", rsmd.getColumnLabel(i), rs.getString(i)));
                     }
                     builder.append(", ");
-                    // hikida add end
                 }
                 LOG.debug(builder.toString());
             }
