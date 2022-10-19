@@ -97,6 +97,12 @@ public class Delivery extends TPCCProcedure {
              PreparedStatement delivSumOrderAmount = this.getPreparedStatement(conn, delivSumOrderAmountSQL);
              PreparedStatement delivUpdateCustBalDelivCnt = this.getPreparedStatement(conn, delivUpdateCustBalDelivCntSQL)) {
 
+            // hikida add start //
+            ResultSet xidRs = conn.createStatement().executeQuery("SELECT txid_current()");xidRs.next();
+            int xid = xidRs.getInt(1);
+            String xactType = this.getProcedureName();
+            // hikida add end //
+
             int d_id, c_id;
             float ol_total;
             int[] orderIDs;
@@ -148,6 +154,9 @@ public class Delivery extends TPCCProcedure {
                     throw new UserAbortException(msg);
                 }
 
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, delivDeleteNewOrder.toString());
+                // hikida add end //
 
                 delivGetCustId.setInt(1, no_o_id);
                 delivGetCustId.setInt(2, d_id);
@@ -192,6 +201,10 @@ public class Delivery extends TPCCProcedure {
                     throw new RuntimeException(msg);
                 }
 
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, delivUpdateCarrierId.toString());
+                // hikida add end //
+
                 delivUpdateDeliveryDate.setTimestamp(1, timestamp);
                 delivUpdateDeliveryDate.setInt(2, no_o_id);
                 delivUpdateDeliveryDate.setInt(3, d_id);
@@ -213,6 +226,9 @@ public class Delivery extends TPCCProcedure {
                     throw new RuntimeException(msg);
                 }
 
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, delivUpdateDeliveryDate.toString());
+                // hikida add end //
 
                 delivSumOrderAmount.setInt(1, no_o_id);
                 delivSumOrderAmount.setInt(2, d_id);
@@ -257,6 +273,10 @@ public class Delivery extends TPCCProcedure {
                     }
                     throw new RuntimeException(msg);
                 }
+
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, delivUpdateCustBalDelivCnt.toString());
+                // hikida add end //
             }
 
             if (trace) {
