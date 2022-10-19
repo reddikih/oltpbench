@@ -174,6 +174,11 @@ public class NewOrder extends TPCCProcedure {
         PreparedStatement stmtUpdateStock = this.getPreparedStatement(conn, stmtUpdateStockSQL);
         PreparedStatement stmtInsertOrderLine = this.getPreparedStatement(conn, stmtInsertOrderLineSQL)) {
 
+           // hikida add start //
+           ResultSet xidRs = conn.createStatement().executeQuery("SELECT txid_current()");xidRs.next();
+           int xid = xidRs.getInt(1);
+           String xactType = this.getProcedureName();
+           // hikida add end //
 
            try {
                stmtGetCust.setInt(1, w_id);
@@ -213,6 +218,10 @@ public class NewOrder extends TPCCProcedure {
                            "Error!! Cannot update next_order_id on district for D_ID="
                                    + d_id + " D_W_ID=" + w_id);
                }
+
+               // hikida add start //
+               LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtUpdateDist.toString());
+               // hikida add end //
 
                o_id = d_next_o_id;
 
@@ -346,6 +355,11 @@ public class NewOrder extends TPCCProcedure {
 
                stmtInsertOrderLine.executeBatch();
                stmtUpdateStock.executeBatch();
+
+               // hikida add start //
+               LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtUpdateStock.toString());
+               // hikida add end //
+               
 
            } finally {
                if (stmtInsertOrderLine != null) {

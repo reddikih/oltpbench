@@ -123,6 +123,12 @@ public class Payment extends TPCCProcedure {
 
             // payUpdateWhse =this.getPreparedStatement(conn, payUpdateWhseSQL);
 
+            // hikida add start //
+            ResultSet xidRs = conn.createStatement().executeQuery("SELECT txid_current()");xidRs.next();
+            int xid = xidRs.getInt(1);
+            String xactType = this.getProcedureName();
+            // hikida add end //
+
             int districtID = TPCCUtil.randomNumber(terminalDistrictLowerID, terminalDistrictUpperID, gen);
             int customerID = TPCCUtil.getCustomerID(gen);
 
@@ -168,6 +174,10 @@ public class Payment extends TPCCProcedure {
                 throw new RuntimeException("W_ID=" + w_id + " not found!");
             }
 
+            // hikida add start //
+            LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, payUpdateWhse.toString());
+            // hikida add end //
+
             payGetWhse.setInt(1, w_id);
             try (ResultSet rs = payGetWhse.executeQuery()) {
                 if (!rs.next()) {
@@ -188,6 +198,10 @@ public class Payment extends TPCCProcedure {
             if (result == 0) {
                 throw new RuntimeException("D_ID=" + districtID + " D_W_ID=" + w_id + " not found!");
             }
+
+            // hikida add start //
+            LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, payUpdateDist.toString());
+            // hikida add end //
 
             payGetDist.setInt(1, w_id);
             payGetDist.setInt(2, districtID);
@@ -245,6 +259,10 @@ public class Payment extends TPCCProcedure {
                     throw new RuntimeException("Error in PYMNT Txn updating Customer C_ID=" + c.c_id + " C_W_ID=" + customerWarehouseID + " C_D_ID=" + customerDistrictID);
                 }
 
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, payUpdateCustBalCdata.toString());
+                // hikida add end //
+
             } else { // GoodCredit
 
                 payUpdateCustBal.setDouble(1, c.c_balance);
@@ -259,6 +277,9 @@ public class Payment extends TPCCProcedure {
                     throw new RuntimeException("C_ID=" + c.c_id + " C_W_ID=" + customerWarehouseID + " C_D_ID=" + customerDistrictID + " not found!");
                 }
 
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, payUpdateCustBal.toString());
+                // hikida add end //
             }
 
             if (w_name.length() > 10) {
