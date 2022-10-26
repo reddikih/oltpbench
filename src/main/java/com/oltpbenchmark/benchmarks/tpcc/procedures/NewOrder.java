@@ -191,12 +191,20 @@ public class NewOrder extends TPCCProcedure {
                    }
                }
 
+               // hikida add start //
+               LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtGetCust.toString());
+               // hikida add end //
+
                stmtGetWhse.setInt(1, w_id);
                try (ResultSet rs = stmtGetWhse.executeQuery()) {
                    if (!rs.next()) {
                        throw new RuntimeException("W_ID=" + w_id + " not found!");
                    }
                }
+
+               // hikida add start //
+               LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtGetWhse.toString());
+               // hikida add end //
 
                stmtGetDist.setInt(1, w_id);
                stmtGetDist.setInt(2, d_id);
@@ -207,6 +215,10 @@ public class NewOrder extends TPCCProcedure {
                    }
                    d_next_o_id = rs.getInt("D_NEXT_O_ID");
                }
+
+               // hikida add start //
+               LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtGetDist.toString());
+               // hikida add end //
 
                //woonhak, need to change order because of foreign key constraints
                //update next_order_id first, but it might doesn't matter
@@ -238,11 +250,19 @@ public class NewOrder extends TPCCProcedure {
                //insert ooder first]]
                /*TODO: add error checking */
 
+               // hikida add start //
+               LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtInsertOOrder.toString());
+               // hikida add end //
+
                stmtInsertNewOrder.setInt(1, o_id);
                stmtInsertNewOrder.setInt(2, d_id);
                stmtInsertNewOrder.setInt(3, w_id);
                stmtInsertNewOrder.executeUpdate();
                /*TODO: add error checking */
+
+               // hikida add start //
+               LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtInsertNewOrder.toString());
+               // hikida add end //
 
 
                for (int ol_number = 1; ol_number <= o_ol_cnt; ol_number++) {
@@ -283,6 +303,10 @@ public class NewOrder extends TPCCProcedure {
                        s_dist_09 = rs.getString("S_DIST_09");
                        s_dist_10 = rs.getString("S_DIST_10");
                    }
+
+                   // hikida add start //
+                   LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtGetStock.toString());
+                   // hikida add end //
 
                    if (s_quantity - ol_quantity >= 10) {
                        s_quantity -= ol_quantity;
@@ -351,13 +375,18 @@ public class NewOrder extends TPCCProcedure {
                    stmtInsertOrderLine.setString(9, ol_dist_info);
                    stmtInsertOrderLine.addBatch();
 
+                   // hikida add start //
+                   LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtUpdateStock.toString());
+                   LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtInsertOrderLine.toString());
+                   // hikida add end //
+                   
                }
 
                stmtInsertOrderLine.executeBatch();
                stmtUpdateStock.executeBatch();
 
                // hikida add start //
-               LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtUpdateStock.toString());
+               // LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtUpdateStock.toString());
                // hikida add end //
                
 

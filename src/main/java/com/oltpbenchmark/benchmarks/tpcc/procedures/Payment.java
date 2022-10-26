@@ -106,6 +106,9 @@ public class Payment extends TPCCProcedure {
                     "   AND C_D_ID = ? " +
                     "   AND C_LAST = ? " +
                     " ORDER BY C_FIRST");
+    
+    int gxid;
+    String gxactType;
 
     public void run(Connection conn, Random gen, int w_id, int numWarehouses, int terminalDistrictLowerID, int terminalDistrictUpperID, TPCCWorker w) throws SQLException {
 
@@ -127,6 +130,8 @@ public class Payment extends TPCCProcedure {
             ResultSet xidRs = conn.createStatement().executeQuery("SELECT txid_current()");xidRs.next();
             int xid = xidRs.getInt(1);
             String xactType = this.getProcedureName();
+            gxid = xid;
+            gxactType = xactType;
             // hikida add end //
 
             int districtID = TPCCUtil.randomNumber(terminalDistrictLowerID, terminalDistrictUpperID, gen);
@@ -191,6 +196,10 @@ public class Payment extends TPCCProcedure {
                 w_name = rs.getString("W_NAME");
             }
 
+            // hikida add start //
+            LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, payGetWhse.toString());
+            // hikida add end //
+
             payUpdateDist.setBigDecimal(1, BigDecimal.valueOf(paymentAmount));
             payUpdateDist.setInt(2, w_id);
             payUpdateDist.setInt(3, districtID);
@@ -217,6 +226,10 @@ public class Payment extends TPCCProcedure {
                 d_name = rs.getString("D_NAME");
             }
 
+            // hikida add start //
+            LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, payGetDist.toString());
+            // hikida add end //
+
             Customer c;
             if (customerByName) {
 
@@ -240,6 +253,10 @@ public class Payment extends TPCCProcedure {
                     }
                     c_data = rs.getString("C_DATA");
                 }
+
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", gxid, gxactType, payGetCustCdata.toString());
+                // hikida add end //
 
                 c_data = c.c_id + " " + customerDistrictID + " " + customerWarehouseID + " " + districtID + " " + w_id + " " + paymentAmount + " | " + c_data;
                 if (c_data.length() > 500) {
@@ -300,6 +317,9 @@ public class Payment extends TPCCProcedure {
             payInsertHist.setString(8, h_data);
             payInsertHist.executeUpdate();
 
+            // hikida add start //
+            LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", gxid, gxactType, payInsertHist.toString());
+            // hikida add end //
             //conn.commit();
 
             if (LOG.isTraceEnabled()) {
@@ -400,6 +420,10 @@ public class Payment extends TPCCProcedure {
                     throw new RuntimeException("C_ID=" + c_id + " C_D_ID=" + c_d_id + " C_W_ID=" + c_w_id + " not found!");
                 }
 
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", gxid, gxactType, payGetCust.toString());
+                // hikida add end //
+
                 Customer c = TPCCUtil.newCustomerFromResults(rs);
                 c.c_id = c_id;
                 c.c_last = rs.getString("C_LAST");
@@ -430,6 +454,10 @@ public class Payment extends TPCCProcedure {
                     customers.add(c);
                 }
             }
+
+            // hikida add start //
+            LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", gxid, gxactType, customerByName.toString());
+            // hikida add end //
         }
 
         if (customers.size() == 0) {

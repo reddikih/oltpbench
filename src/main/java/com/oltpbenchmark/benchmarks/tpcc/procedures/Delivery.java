@@ -133,6 +133,10 @@ public class Delivery extends TPCCProcedure {
                     orderIDs[d_id - 1] = no_o_id;
                 }
 
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, delivGetOrderId.toString());
+                // hikida add end //
+
                 delivDeleteNewOrder.setInt(1, no_o_id);
                 delivDeleteNewOrder.setInt(2, d_id);
                 delivDeleteNewOrder.setInt(3, w_id);
@@ -179,6 +183,10 @@ public class Delivery extends TPCCProcedure {
                     }
                     c_id = rs.getInt("O_C_ID");
                 }
+
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, delivGetCustId.toString());
+                // hikida add end //
 
                 delivUpdateCarrierId.setInt(1, o_carrier_id);
                 delivUpdateCarrierId.setInt(2, no_o_id);
@@ -251,6 +259,10 @@ public class Delivery extends TPCCProcedure {
                     }
                     ol_total = rs.getFloat("OL_TOTAL");
                 }
+
+                // hikida add start //
+                LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, delivSumOrderAmount.toString());
+                // hikida add end //
 
                 int idx = 1; // HACK: So that we can debug this query
                 delivUpdateCustBalDelivCnt.setBigDecimal(idx++, BigDecimal.valueOf(ol_total));
