@@ -27,4 +27,5 @@ public abstract class TPCCConstants {
     public static final String TABLENAME_OPENORDER = "oorder";
     public static final String TABLENAME_ORDERLINE = "order_line";
     public static final String TABLENAME_NEWORDER = "new_order";
+    public static final String TABLENAME_CREDITSTATUS = "credit_status";
 }

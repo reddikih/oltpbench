@@ -146,5 +146,16 @@ CREATE TABLE order_line (
     PRIMARY KEY (ol_w_id, ol_d_id, ol_o_id, ol_number)
 );
 
+DROP TABLE IF EXISTS credit_status;
+CREATE TABLE credit_status (
+  cs_w_id int NOT NULL,
+  cs_d_id int NOT NULL,
+  cs_c_id int NOT NULL,
+  cs_credit char(2) NOT NULL,
+  cs_updated_d timestamp DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (cs_w_id,cs_d_id,cs_c_id) REFERENCES customer (c_w_id,c_d_id,c_id) ON DELETE CASCADE,
+  PRIMARY KEY (cs_w_id,cs_d_id,cs_c_id)
+);
+
 CREATE INDEX idx_customer_name ON customer (c_w_id, c_d_id, c_last, c_first);
 CREATE INDEX idx_order ON oorder (o_w_id, o_d_id, o_c_id, o_id);
