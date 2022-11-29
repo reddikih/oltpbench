@@ -107,6 +107,9 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                     // ORDERS
                     loadOrders(conn, w_id, TPCCConfig.configDistPerWhse, TPCCConfig.configCustPerDist);
 
+                    // hikida add start //
+                    loadCreditStatus(conn);
+                    // hikida add end//
                 }
 
                 @Override
@@ -606,6 +609,15 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
             LOG.error(se.getMessage(), se);
         }
 
+    }
+
+    protected void loadCreditStatus(Connection conn) {
+        try {
+            conn.createStatement().execute(
+                "insert into credit_status (cs_w_id,cs_d_id,cs_c_id,cs_credit) select c_w_id,c_d_id,c_id,c_credit from customer;");
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
     }
 
 }
