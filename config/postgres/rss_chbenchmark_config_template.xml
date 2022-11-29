@@ -29,8 +29,8 @@
             <rate>unlimited</rate>
 
             <!-- Need to Specify transaction weights for each workload .. Otherwise the number of fields won't match -->
-            <weights bench="tpcc">45,43,4,4,4</weights>
-            <weights bench="chbenchmark">3, 2, 3, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5</weights>
+            <weights bench="tpcc">43,40,4,4,4,5</weights>
+            <weights bench="chbenchmark">3, 2, 3, 2, 3, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5</weights>
         </work>
     </works>
 
@@ -102,6 +102,9 @@
         <transactiontype>
             <name>Q22</name>
         </transactiontype>
+        <transactiontype>
+            <name>Q23</name>
+        </transactiontype>
     </transactiontypes>
 
     <!-- TPCC specific -->
@@ -120,6 +123,9 @@
         </transactiontype>
         <transactiontype>
             <name>StockLevel</name>
+        </transactiontype>
+        <transactiontype>
+            <name>CreditStatus</name>
         </transactiontype>
     </transactiontypes>
 </parameters>
