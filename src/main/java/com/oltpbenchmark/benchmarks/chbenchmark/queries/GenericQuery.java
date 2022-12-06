@@ -57,16 +57,18 @@ public abstract class GenericQuery extends Procedure {
             if (LOG.isDebugEnabled()) {
                 StringBuilder builder = new StringBuilder();
                 LOG.debug("[rss] {} Statement: {}", getProcedureName(), pstmt);
-                builder.append(String.format("[rss] %s Result: ", getProcedureName()));
-                while (rs.next()) {
-                    ResultSetMetaData rsmd = rs.getMetaData();
-                    int cols = rsmd.getColumnCount();
-                    for (int i=1; i<=cols; i++) {
-                        builder.append(String.format("%s=%s ", rsmd.getColumnLabel(i), rs.getString(i)));
+                if (LOG.isTraceEnabled()) {
+                    builder.append(String.format("[rss] %s Result: ", getProcedureName()));
+                    while (rs.next()) {
+                        ResultSetMetaData rsmd = rs.getMetaData();
+                        int cols = rsmd.getColumnCount();
+                        for (int i=1; i<=cols; i++) {
+                            builder.append(String.format("%s=%s ", rsmd.getColumnLabel(i), rs.getString(i)));
+                        }
+                        builder.append(", ");
                     }
-                    builder.append(", ");
+                    LOG.trace(builder.toString());
                 }
-                LOG.debug(builder.toString());
             }
             // hikida add end
     } finally {
