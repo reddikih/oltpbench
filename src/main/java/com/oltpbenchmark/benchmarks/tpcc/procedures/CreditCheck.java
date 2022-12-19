@@ -13,11 +13,10 @@ import com.oltpbenchmark.api.SQLStmt;
 import com.oltpbenchmark.benchmarks.tpcc.TPCCConstants;
 import com.oltpbenchmark.benchmarks.tpcc.TPCCUtil;
 import com.oltpbenchmark.benchmarks.tpcc.TPCCWorker;
-import com.oltpbenchmark.benchmarks.tpcc.pojo.Customer;
 
-public class CreditStatus extends TPCCProcedure {
+public class CreditCheck extends TPCCProcedure {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CreditStatus.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CreditCheck.class);
 
     public SQLStmt csGetCustBalSQL = new SQLStmt(
         "SELECT c_balance, c_credit_lim" +
