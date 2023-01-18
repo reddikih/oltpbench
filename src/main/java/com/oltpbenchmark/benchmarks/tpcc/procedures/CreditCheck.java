@@ -9,6 +9,7 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.oltpbenchmark.DBWorkload;
 import com.oltpbenchmark.api.SQLStmt;
 import com.oltpbenchmark.benchmarks.tpcc.TPCCConstants;
 import com.oltpbenchmark.benchmarks.tpcc.TPCCUtil;
@@ -52,6 +53,9 @@ public class CreditCheck extends TPCCProcedure {
             ResultSet xidRs = conn.createStatement().executeQuery("SELECT txid_current()");xidRs.next();
             int xid = xidRs.getInt(1);
             String xactType = this.getProcedureName();
+
+            long startTs, endTs;
+            startTs = System.nanoTime() - DBWorkload.benchmarkStart;
 
             int districtID = TPCCUtil.randomNumber(terminalDistrictLowerID, terminalDistrictUpperID, gen);
             int customerID = TPCCUtil.getCustomerID(gen);
@@ -124,6 +128,12 @@ public class CreditCheck extends TPCCProcedure {
             }
 
             LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, csUpdateCustCredit.toString());
+
+            endTs = System.nanoTime() - DBWorkload.benchmarkStart;
+            LOG.debug(String.format(
+                "[roa] tx infos(tx_type,xid,tx_start,tx_end) %s %d %.3f %.3f",
+                xactType, xid, startTs / 1000000000.0, endTs / 1000000000.0
+            ));
         }
     }
 

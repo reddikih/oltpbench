@@ -51,6 +51,10 @@ public class DBWorkload {
     private static final String RATE_DISABLED = "disabled";
     private static final String RATE_UNLIMITED = "unlimited";
 
+    // hikida add start //
+    public static long benchmarkStart;
+    // hikida add end //
+
     /**
      * @param args
      * @throws Exception
@@ -374,6 +378,9 @@ public class DBWorkload {
 
         }
 
+        // hikida add start //
+        benchmarkStart = System.nanoTime();
+        // hikida add end //
 
         // Export StatementDialects
         if (isBooleanOptionSet(argsLine, "dialects-export")) {

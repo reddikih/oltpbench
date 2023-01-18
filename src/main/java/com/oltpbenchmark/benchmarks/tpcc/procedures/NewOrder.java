@@ -17,6 +17,7 @@
 
 package com.oltpbenchmark.benchmarks.tpcc.procedures;
 
+import com.oltpbenchmark.DBWorkload;
 import com.oltpbenchmark.api.SQLStmt;
 import com.oltpbenchmark.benchmarks.tpcc.TPCCConfig;
 import com.oltpbenchmark.benchmarks.tpcc.TPCCConstants;
@@ -178,6 +179,9 @@ public class NewOrder extends TPCCProcedure {
            ResultSet xidRs = conn.createStatement().executeQuery("SELECT txid_current()");xidRs.next();
            int xid = xidRs.getInt(1);
            String xactType = this.getProcedureName();
+
+           long startTs, endTs;
+           startTs = System.nanoTime() - DBWorkload.benchmarkStart;
            // hikida add end //
 
            try {
@@ -386,9 +390,12 @@ public class NewOrder extends TPCCProcedure {
                stmtUpdateStock.executeBatch();
 
                // hikida add start //
-               // LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, stmtUpdateStock.toString());
+               endTs = System.nanoTime() - DBWorkload.benchmarkStart;
+               LOG.debug(String.format(
+                   "[roa] tx infos(tx_type,xid,tx_start,tx_end) %s %d %.3f %.3f",
+                   xactType, xid, startTs / 1000000000.0, endTs / 1000000000.0
+               ));
                // hikida add end //
-               
 
            } finally {
                if (stmtInsertOrderLine != null) {

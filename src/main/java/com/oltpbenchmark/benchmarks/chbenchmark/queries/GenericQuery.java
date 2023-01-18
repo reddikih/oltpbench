@@ -17,6 +17,7 @@
 
 package com.oltpbenchmark.benchmarks.chbenchmark.queries;
 
+import com.oltpbenchmark.DBWorkload;
 import com.oltpbenchmark.api.Procedure;
 import com.oltpbenchmark.api.SQLStmt;
 
@@ -29,11 +30,16 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class GenericQuery extends Procedure {
     private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
 
     protected abstract SQLStmt get_query();
+
+    // hikida add start //
+    public static AtomicLong qid = new AtomicLong(1L);
+    // hikida add end //
 
     public void run(Connection conn) throws SQLException {
         PreparedStatement pstmt = null;
@@ -46,6 +52,11 @@ public abstract class GenericQuery extends Procedure {
             stmt = conn.createStatement();
 
             // hikida add start //
+            long startTs, endTs;
+            startTs = System.nanoTime() - DBWorkload.benchmarkStart;
+            // hikida add end //
+
+            // hikida add start //
             if (conn.isReadOnly())
                 LOG.debug("[rss] {} read only flag set succeeded.", getProcedureName());
             else
@@ -53,6 +64,15 @@ public abstract class GenericQuery extends Procedure {
             // hikida add end //
 
             rs = pstmt.executeQuery();
+
+            // hikida add start //
+            endTs = System.nanoTime() - DBWorkload.benchmarkStart;
+            LOG.debug(String.format(
+                "[roa] tx infos(tx_type,xid,tx_start,tx_end) %s %d %.3f %.3f",
+                getProcedureName(), qid.getAndIncrement(), startTs / 1000000000.0, endTs / 1000000000.0
+            ));
+            // hikida add end //
+
             // hikida add start
             if (LOG.isDebugEnabled()) {
                 StringBuilder builder = new StringBuilder();
