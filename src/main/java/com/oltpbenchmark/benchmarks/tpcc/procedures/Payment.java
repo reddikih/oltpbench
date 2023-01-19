@@ -17,6 +17,7 @@
 
 package com.oltpbenchmark.benchmarks.tpcc.procedures;
 
+import com.oltpbenchmark.DBWorkload;
 import com.oltpbenchmark.api.SQLStmt;
 import com.oltpbenchmark.benchmarks.tpcc.TPCCConfig;
 import com.oltpbenchmark.benchmarks.tpcc.TPCCConstants;
@@ -132,6 +133,9 @@ public class Payment extends TPCCProcedure {
             String xactType = this.getProcedureName();
             gxid = xid;
             gxactType = xactType;
+
+            long startTs, endTs;
+            startTs = System.nanoTime() - DBWorkload.benchmarkStart;
             // hikida add end //
 
             int districtID = TPCCUtil.randomNumber(terminalDistrictLowerID, terminalDistrictUpperID, gen);
@@ -321,6 +325,15 @@ public class Payment extends TPCCProcedure {
             LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", gxid, gxactType, payInsertHist.toString());
             // hikida add end //
             //conn.commit();
+
+            // hikida add start //
+            endTs = System.nanoTime() - DBWorkload.benchmarkStart;
+            LOG.debug(String.format(
+                "[roa] tx infos(tx_type,xid,tx_start,tx_end) %s %d %.3f %.3f",
+                xactType, xid, startTs / 1000000000.0, endTs / 1000000000.0
+            ));
+            // hikida add end //
+
 
             if (LOG.isTraceEnabled()) {
                 StringBuilder terminalMessage = new StringBuilder();
