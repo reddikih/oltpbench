@@ -392,8 +392,8 @@ public class NewOrder extends TPCCProcedure {
                // hikida add start //
                endTs = System.nanoTime() - DBWorkload.benchmarkStart;
                LOG.debug(String.format(
-                   "[roa] tx infos(tx_type,xid,tx_start,tx_end) %s %d %.3f %.3f",
-                   xactType, xid, startTs / 1000000000.0, endTs / 1000000000.0
+                   "[roa] tx infos(tx_type,xid,tx_start,tx_end) %s %d %.3f %.3f %d",
+                   xactType, xid, startTs / 1000000000.0, endTs / 1000000000.0, c_id
                ));
                // hikida add end //
 

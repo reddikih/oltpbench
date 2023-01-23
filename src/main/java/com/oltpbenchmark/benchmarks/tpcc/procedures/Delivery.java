@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Delivery extends TPCCProcedure {
@@ -105,6 +107,7 @@ public class Delivery extends TPCCProcedure {
 
             long startTs, endTs;
             startTs = System.nanoTime() - DBWorkload.benchmarkStart;
+            List<Integer> custIds = new ArrayList();
             // hikida add end //
 
             int d_id, c_id;
@@ -292,14 +295,22 @@ public class Delivery extends TPCCProcedure {
 
                 // hikida add start //
                 LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, delivUpdateCustBalDelivCnt.toString());
+                custIds.add(c_id);
                 // hikida add end //
             }
 
             // hikida add start //
             endTs = System.nanoTime() - DBWorkload.benchmarkStart;
+
+            StringBuilder sb = new StringBuilder();
+            for (Integer cid : custIds) {
+                sb.append(cid);
+                sb.append(" ");
+            }
+
             LOG.debug(String.format(
-                "[roa] tx infos(tx_type,xid,tx_start,tx_end) %s %d %.3f %.3f",
-                xactType, xid, startTs / 1000000000.0, endTs / 1000000000.0
+                "[roa] tx infos(tx_type,xid,tx_start,tx_end,custId) %s %d %.3f %.3f %s",
+                xactType, xid, startTs / 1000000000.0, endTs / 1000000000.0, sb.toString()
             ));
             // hikida add end //
             
