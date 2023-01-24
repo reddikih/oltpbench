@@ -308,7 +308,7 @@ public class Delivery extends TPCCProcedure {
                 sb.append(" ");
             }
 
-            LOG.debug(String.format(
+            LOG.info(String.format(
                 "[roa] tx infos(tx_type,xid,tx_start,tx_end,custId) %s %d %.3f %.3f %s",
                 xactType, xid, startTs / 1000000000.0, endTs / 1000000000.0, sb.toString()
             ));
