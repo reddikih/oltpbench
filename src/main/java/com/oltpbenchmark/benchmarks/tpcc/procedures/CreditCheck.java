@@ -130,9 +130,9 @@ public class CreditCheck extends TPCCProcedure {
             LOG.debug("[hiki] xid:{} xtype:{} stmt:{}", xid, xactType, csUpdateCustCredit.toString());
 
             endTs = System.nanoTime() - DBWorkload.benchmarkStart;
-            LOG.debug(String.format(
-                "[roa] tx infos(tx_type,xid,tx_start,tx_end) %s %d %.3f %.3f",
-                xactType, xid, startTs / 1000000000.0, endTs / 1000000000.0
+            LOG.info(String.format(
+                "[roa] tx infos(tx_type,xid,tx_start,tx_end,custId) %s %d %.3f %.3f %d",
+                xactType, xid, startTs / 1000000000.0, endTs / 1000000000.0, customerID
             ));
         }
     }
