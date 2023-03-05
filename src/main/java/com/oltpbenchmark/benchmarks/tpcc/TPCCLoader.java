@@ -633,9 +633,11 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
     }
 
     protected void loadCreditStatus(Connection conn) {
-        try {
-            conn.createStatement().execute(
-                "insert into credit_status (cs_w_id,cs_d_id,cs_c_id,cs_credit) select c_w_id,c_d_id,c_id,c_credit from customer;");
+        String sql = "insert into credit_status (cs_w_id,cs_d_id,cs_c_id,cs_credit) select c_w_id,c_d_id,c_id,c_credit from customer;";
+        try (PreparedStatement ccPrepStmt = conn.prepareStatement(sql)) {
+            // conn.createStatement().execute(
+            //     "insert into credit_status (cs_w_id,cs_d_id,cs_c_id,cs_credit) select c_w_id,c_d_id,c_id,c_credit from customer;");
+            ccPrepStmt.executeUpdate();
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         }
