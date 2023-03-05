@@ -56,7 +56,6 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
             @Override
             public void load(Connection conn) {
                 loadItems(conn, TPCCConfig.configItemCount);
-
             }
 
             @Override
@@ -64,6 +63,24 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                 itemLatch.countDown();
             }
         });
+
+        // hikida add start //
+        final CountDownLatch customerLatch = new CountDownLatch(numWarehouses);
+        threads.add(new LoaderThread(this.benchmark) {
+            @Override
+            public void load(Connection conn) throws SQLException {
+                loadCreditStatus(conn);
+            }
+            @Override
+            public void beforeLoad() {
+                try {
+                    customerLatch.await();
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        // hikida add end //
 
         // WAREHOUSES
         // We use a separate thread per warehouse. Each thread will load
@@ -107,9 +124,6 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                     // ORDERS
                     loadOrders(conn, w_id, TPCCConfig.configDistPerWhse, TPCCConfig.configCustPerDist);
 
-                    // hikida add start //
-                    loadCreditStatus(conn);
-                    // hikida add end//
                 }
 
                 @Override
@@ -123,6 +137,13 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                         throw new RuntimeException(ex);
                     }
                 }
+
+                // hikida add start //
+                @Override
+                public void afterLoad() {
+                    customerLatch.countDown();
+                }
+                // hikida add end
             };
             threads.add(t);
         }
